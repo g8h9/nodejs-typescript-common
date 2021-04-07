@@ -1,6 +1,6 @@
 /* eslint-disable  */
 import { Stan } from 'node-nats-streaming';
-
+import logger from '../logger';
 interface Event<T> {
   subject: T;
   data: any;
@@ -21,7 +21,7 @@ export abstract class Publisher<T extends Event<any>> {
         if (err) {
           reject(err);
         } else {
-          console.log('Event published to subject', this.subject);
+          logger.info('Event published to subject', this.subject);
           resolve();
         }
       });
