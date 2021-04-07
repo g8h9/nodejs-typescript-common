@@ -6,6 +6,7 @@ export * from './errors/not-authorized';
 export * from './events/base-listener';
 export * from './events/base-publisher';
 
+export * from './middleware/request-middleware';
 export * from './logger';
 export * from './lib/keycloak';
 export * from './lib/safe-mongoose-connection';
