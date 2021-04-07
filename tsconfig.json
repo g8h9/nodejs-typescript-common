@@ -3,6 +3,8 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "target": "es6",
+    "declaration": true,
+    "emitDeclarationOnly": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
