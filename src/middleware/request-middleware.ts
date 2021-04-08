@@ -2,7 +2,7 @@ import {
   RequestHandler, Request, Response, NextFunction
 } from 'express';
 import Joi from 'joi';
-import BadRequest from '../errors/bad-request';
+import { BadRequest } from '../errors/bad-request';
 import logger from '../logger';
 
 const getMessageFromJoiError = (error: Joi.ValidationError): string | undefined => {
