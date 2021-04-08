@@ -20,11 +20,9 @@ const logTransports = [
   new ConsoleLoggerTransport()
 ];
 
-const logger = createLogger({
+export const logger = createLogger({
   format: format.combine(format.timestamp()),
   transports: logTransports,
   defaultMeta: { service: 'api' },
   level: process.env.NODE_ENV === 'development' ? 'silly' : 'warn'
 });
-
-export default logger;
