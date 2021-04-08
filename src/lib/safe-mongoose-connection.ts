@@ -1,11 +1,11 @@
 import mongoose, { ConnectionOptions } from 'mongoose';
 
 /** Callback for establishing or re-stablishing mongo connection */
-interface IOnConnectedCallback {
+export interface IOnConnectedCallback {
   (mongoUrl: string): void;
 }
 
-interface SafeMongooseConnectionOptions {
+export interface SafeMongooseConnectionOptions {
   mongoUrl: string;
   mongooseConnectionOptions?: ConnectionOptions;
   retryDelayMs?: number;
@@ -29,7 +29,7 @@ const defaultMongooseConnectionOptions: ConnectionOptions = {
  * MongoDB without crashing the server.
  * @author Sidhant Panda
  */
-export default class SafeMongooseConnection {
+export class SafeMongooseConnection {
   /** Safe Mongoose Connection options */
   private readonly options: SafeMongooseConnectionOptions;
 
