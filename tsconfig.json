@@ -4,7 +4,6 @@
     "esModuleInterop": true,
     "target": "es6",
     "declaration": true,
-    "emitDeclarationOnly": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
@@ -16,6 +15,6 @@
     },
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/logger.ts"]
+  "include": ["src/index.ts"],
+  "exclude": ["src/logger.ts"]
 }
