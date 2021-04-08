@@ -1,4 +1,4 @@
-export default class ApplicationError extends Error {
+export class ApplicationError extends Error {
   public message: string = 'ApplicationError';
 
   public status: number = 500;
