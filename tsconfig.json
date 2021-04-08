@@ -15,6 +15,5 @@
     },
     "resolveJsonModule": true
   },
-  "include": ["src/index.ts"],
-  "exclude": ["src/logger.ts"]
+  "include": ["src/**/*"]
 }
