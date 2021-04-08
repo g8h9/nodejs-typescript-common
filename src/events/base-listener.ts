@@ -1,6 +1,6 @@
 /* eslint-disable  */
 import { Message, Stan } from 'node-nats-streaming';
-import logger from '../logger';
+import { logger } from '../logger';
 interface Event<T> {
   subject: T;
   data: any;

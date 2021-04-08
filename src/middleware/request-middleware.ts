@@ -3,7 +3,7 @@ import {
 } from 'express';
 import Joi from 'joi';
 import { BadRequest } from '../errors/bad-request';
-import logger from '../logger';
+import { logger } from '../logger';
 
 const getMessageFromJoiError = (error: Joi.ValidationError): string | undefined => {
   if (!error.details && error.message) {

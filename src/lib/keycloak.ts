@@ -1,6 +1,6 @@
 import session from 'express-session';
 import Keycloak from 'keycloak-connect';
-import logger from '../logger';
+import { logger } from '../logger';
 
 let _keycloak: Keycloak.Keycloak;
 
