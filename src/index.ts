@@ -8,3 +8,4 @@ export * from './middleware/request-middleware';
 export * from './logger';
 export * from './lib/keycloak';
 export * from './lib/safe-mongoose-connection';
+export * from './lib/query-builder';
