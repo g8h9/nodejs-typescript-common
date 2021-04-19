@@ -1,40 +1,40 @@
-import { Operator } from './operator';
-const operators: Record<Operator, (value: any) => Filter<any>> = {
-  [Operator.is_null]: (value: any = null) => new IsNull(value),
-  [Operator.not_null]: (value: any = null) => new NotNull(value),
-  [Operator.str_eq]: (value: string) => new StringEqualOperator(value),
-  [Operator.n_str_eq]: (value: string) => new StringNotEqualOperator(value),
-  [Operator.str_in]: (value: string[]) => new StringIn(value),
-  [Operator.n_str_in]: (value: string[]) => new StringNotIn(value),
-  [Operator.regex]: (value: RegExp) => new Regex(value),
-  [Operator.num_eq]: (value: number) => new NumberEqual(value),
-  [Operator.n_num_eq]: (value: number) => new NumberNotEqual(value),
-  [Operator.gt]: (value: number) => new NumberGreaterThan(value),
-  [Operator.lt]: (value: number) => new NumberLessThan(value),
-  [Operator.gte]: (value: number) => new NumberGreaterThanOrEqual(value),
-  [Operator.lte]: (value: number) => new NumberLessThanOrEqual(value),
-  [Operator.num_between]: (value: number[]) => new NumberBetween(value),
-  [Operator.date_eq]: (value: Date) => new DateEqual(value),
-  [Operator.n_date_eq]: (value: Date) => new DateNotEqual(value),
-  [Operator.before]: (value: Date) => new DateBefore(value),
-  [Operator.after]: (value: Date) => new DateAfter(value),
-  [Operator.date_between]: (value: Date[]) => new DateBetween(value),
+const operators: Record<string, (value: any) => Filter<any>> = {
+  is_null: (value: any = null) => new IsNull(value),
+  not_null: (value: any = null) => new NotNull(value),
+  str_eq: (value: string) => new StringEqualOperator(value),
+  n_str_eq: (value: string) => new StringNotEqualOperator(value),
+  str_in: (value: string[]) => new StringIn(value),
+  n_str_in: (value: string[]) => new StringNotIn(value),
+  regex: (value: RegExp) => new Regex(value),
+  num_eq: (value: number) => new NumberEqual(value),
+  n_num_eq: (value: number) => new NumberNotEqual(value),
+  gt: (value: number) => new NumberGreaterThan(value),
+  lt: (value: number) => new NumberLessThan(value),
+  gte: (value: number) => new NumberGreaterThanOrEqual(value),
+  lte: (value: number) => new NumberLessThanOrEqual(value),
+  num_between: (value: number[]) => new NumberBetween(value),
+  date_eq: (value: Date) => new DateEqual(value),
+  n_date_eq: (value: Date) => new DateNotEqual(value),
+  before: (value: Date) => new DateBefore(value),
+  after: (value: Date) => new DateAfter(value),
+  date_between: (value: Date[]) => new DateBetween(value),
 };
 
-abstract class Filters{
+export class Filters {
   value: Filter<any>[];
-  constructor(value: Filter<any>[]){
+  constructor(value: Filter<any>[]) {
     this.value = value;
   }
 
-  query(): any{
-    return this.value
-          .map((filter) => filter.query())
-          .reduce((result, query) => ({ ...result, ...query }), {})
+  query(): any {
+    return this.value.map((filter) => filter.query()).reduce((result, query) => ({ ...result, ...query }), {});
+  }
+  static parse(filters: Record<string, any>): Filters {
+    return new Filters(Object.keys(filters).map((operator) => Filter.newOperator(operator, filters[operator])));
   }
 }
 
-export abstract class Filter<T> {
+abstract class Filter<T> {
   value: T;
 
   constructor(value: T) {
@@ -43,7 +43,7 @@ export abstract class Filter<T> {
 
   abstract query(): any;
 
-  static newOperator<V>(operator: Operator, value: V = null): Filter<V> {
+  static newOperator<V>(operator: string, value: V = null): Filter<V> {
     return operators[operator](value);
   }
 }
@@ -161,9 +161,8 @@ class DateBetween extends Filter<Date[]> {
   }
 }
 
-class Or extends Filter<Filter<any>[]>{
+class Or extends Filter<Filter<any>[]> {
   query(): any {
-    return
+    return;
   }
-
 }

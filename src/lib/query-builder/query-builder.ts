@@ -1,7 +1,8 @@
-import { Filter } from "./filter";
+import { Filters } from "./filter";
 
 export abstract class QueryBuilder {
-  static newBuilder(filter: Record<string, Filter<any>[]>): QueryBuilder {
+  static newBuilder(filter: Record<string, Record<string,any>>): QueryBuilder {
+
     return new MongoQueryBuilder(filter);
   }
 
@@ -9,20 +10,18 @@ export abstract class QueryBuilder {
 }
 
 class MongoQueryBuilder extends QueryBuilder {
-  filter: Record<string, Filter<any>[]>;
+  filter: Record<string, Filters>;
 
-  constructor(filter: Record<string, Filter<any>[]>) {
+  constructor(filter: Record<string, Record<string,any>>) {
     super();
-    this.filter = filter;
+    this.filter = Object.keys(filter).reduce((acc:Record<string,Filters>,crr:string)=> ({...acc,[crr]:Filters.parse(filter[crr])}),{});
   }
 
   build(): Record<string, any> {
     return (Object.keys(this.filter) as string[]).reduce(
       (acc: Record<string, any>, crr: string) => ({
         ...acc,
-        [crr]: this.filter[crr]
-          .map((filter) => filter.query())
-          .reduce((result, query) => ({ ...result, ...query }), {}),
+        [crr]: this.filter[crr].query()
       }),
       {},
     );
