@@ -2,7 +2,7 @@
 
 name: CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
@@ -18,12 +18,14 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - name: Publish new version to NPM
+        uses: actions/setup-node@v2
         with:
-          node-version: 14
+            node-version: 14.x
+            registry-url: 'https://registry.npmjs.org'
       - run: npm install --global yarn
-      - run: yarn install && yarn pub
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      - run: yarn install
+      - run: yarn pub
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

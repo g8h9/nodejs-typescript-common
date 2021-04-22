@@ -15,7 +15,7 @@
     "lint": "eslint  src --ext .ts",
     "fix-lint": "eslint  src --ext .ts --fix",
     "prettier": "prettier",
-    "pub": "yarn version && yarn build && yarn publish",
+    "pub": "yarn build && yarn publish",
     "test": "jest --detectOpenHandles"
   },
   "jest": {
