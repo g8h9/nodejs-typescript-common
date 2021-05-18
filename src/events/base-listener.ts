@@ -3,7 +3,7 @@ import { StringRegexOptions } from 'joi';
 import { Message, Stan, SubscriptionOptions } from 'node-nats-streaming';
 import { logger } from '../logger';
 
-interface Handler {
+export interface Handler {
   subject: string;
   queueGroupName: string;
   onMessage: <T>(data: T, msg: Message) => void;
@@ -31,7 +31,15 @@ class BaseListener extends Listener {
       .setAckWait(this.ackWait)
       .setDurableName(queueGroupName);
 
-  listen<T>({ subject, queueGroupName, onMessage }: Handler): void {
+  listen<T>({
+    subject,
+    queueGroupName,
+    onMessage,
+  }: {
+    subject: string;
+    queueGroupName: string;
+    onMessage: <T>(data: T, msg: Message) => void;
+  }): void {
     const subscription = this.client.subscribe(subject, queueGroupName, this.subscriptionOptions(queueGroupName));
 
     subscription.on('message', (msg: Message) => {

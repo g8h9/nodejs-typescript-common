@@ -128,3 +128,15 @@ it('query-build test build map and sort', () => {
   expect(expectResult.map).toEqual(expect.arrayContaining(['lastname','name']));
   expect(expectResult.sort).toStrictEqual('+name -lastname');
 });
+
+it('query-build test null filter',()=>{
+  const queryBuilder: QueryBuilder = QueryBuilder.newBuilder({
+    filter: {},
+    map: [],
+    sort: [],
+  });
+  const expectResult = queryBuilder.build();
+  expect(expectResult.filter).toStrictEqual({});
+  expect(expectResult.map).toEqual([]);
+  expect(expectResult.sort).toStrictEqual('');
+})
