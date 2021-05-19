@@ -2,13 +2,13 @@
 import { Message, Stan } from 'node-nats-streaming';
 import { logger } from '../logger';
 
-export interface Handler {
+export interface Handler<T> {
   subject: string;
   queueGroupName: string;
-  onMessage: <T>(data: T, msg: Message) => Promise<void>;
+  onMessage: (data: T, msg: Message) => Promise<void>;
 }
 export abstract class Listener {
-  abstract listen<T>(handler: Handler): void;
+  abstract listen<T>(handler: Handler<T>): void;
   protected ackWait = 5000;
   static newInstance(client: Stan): Listener {
     return new BaseListener(client);
