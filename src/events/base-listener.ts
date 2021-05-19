@@ -1,12 +1,11 @@
 /* eslint-disable  */
-import { StringRegexOptions } from 'joi';
-import { Message, Stan, SubscriptionOptions } from 'node-nats-streaming';
+import { Message, Stan } from 'node-nats-streaming';
 import { logger } from '../logger';
 
 export interface Handler {
   subject: string;
   queueGroupName: string;
-  onMessage: <T>(data: T, msg: Message) => void;
+  onMessage: <T>(data: T, msg: Message) => Promise<void>;
 }
 export abstract class Listener {
   abstract listen<T>(handler: Handler): void;
@@ -38,15 +37,15 @@ class BaseListener extends Listener {
   }: {
     subject: string;
     queueGroupName: string;
-    onMessage: <T>(data: T, msg: Message) => void;
+    onMessage: <T>(data: T, msg: Message) => Promise<void>;
   }): void {
     const subscription = this.client.subscribe(subject, queueGroupName, this.subscriptionOptions(queueGroupName));
 
-    subscription.on('message', (msg: Message) => {
+    subscription.on('message', async (msg: Message) => {
       logger.info(`Message received: ${subject} / ${queueGroupName}`);
 
       const parsedData = this.parseMessage(msg);
-      onMessage(parsedData, msg);
+      await onMessage(parsedData, msg);
     });
   }
 
