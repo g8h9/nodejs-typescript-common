@@ -1,2 +1,2 @@
-export { Listener } from './base-listener';
+export { Listener, Handler } from './base-listener';
 export { Publisher } from './base-publisher';

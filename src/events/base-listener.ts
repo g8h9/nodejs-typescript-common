@@ -1,47 +1,55 @@
 /* eslint-disable  */
 import { Message, Stan } from 'node-nats-streaming';
 import { logger } from '../logger';
-interface Event<T> {
-  subject: T;
-  data: any;
+
+export interface Handler<T> {
+  subject: string;
+  queueGroupName: string;
+  onMessage: (data: T, msg: Message) => Promise<void>;
 }
-export abstract class Listener<T extends Event<any>> {
-  abstract subject: T['subject'];
+export abstract class Listener {
+  abstract listen<T>(handler: Handler<T>): void;
+  protected ackWait = 5000;
+  static newInstance(client: Stan): Listener {
+    return new BaseListener(client);
+  }
+}
 
-  abstract queueGroupName: string;
-
-  abstract onMessage(data: T['data'], msg: Message): void;
-
-  protected client: Stan;
-
-  protected ackWait = 5 * 1000;
-
+class BaseListener extends Listener {
+  private client: Stan;
   constructor(client: Stan) {
+    super();
     this.client = client;
   }
 
-  subscriptionOptions() {
-    return this.client
+  subscriptionOptions = (queueGroupName: string) =>
+    this.client
       .subscriptionOptions()
       .setDeliverAllAvailable()
       .setManualAckMode(true)
       .setAckWait(this.ackWait)
-      .setDurableName(this.queueGroupName);
-  }
+      .setDurableName(queueGroupName);
 
-  listen() {
-    const subscription = this.client.subscribe(this.subject, this.queueGroupName, this.subscriptionOptions());
+  listen<T>({
+    subject,
+    queueGroupName,
+    onMessage,
+  }: {
+    subject: string;
+    queueGroupName: string;
+    onMessage: <T>(data: T, msg: Message) => Promise<void>;
+  }): void {
+    const subscription = this.client.subscribe(subject, queueGroupName, this.subscriptionOptions(queueGroupName));
 
-    subscription.on('message', (msg: Message) => {
-      logger.info(`Message received: ${this.subject} / ${this.queueGroupName}`);
+    subscription.on('message', async (msg: Message) => {
+      logger.info(`Message received: ${subject} / ${queueGroupName}`);
 
       const parsedData = this.parseMessage(msg);
-      this.onMessage(parsedData, msg);
+      await onMessage(parsedData, msg);
     });
   }
 
-  parseMessage(msg: Message) {
-    const data = msg.getData();
-    return typeof data === 'string' ? JSON.parse(data) : JSON.parse(data.toString('utf8'));
+  private parseMessage(msg: Message) {
+    return JSON.parse(msg.getData().toString('utf8'));
   }
 }

@@ -2,10 +2,10 @@ import { Filters } from './filter';
 
 export abstract class QueryBuilder {
   static newBuilder(query: {
-    filter: Record<string, Record<string, any>>,
-    sort?: string[],
-    map?: string[]}
-  ): QueryBuilder {
+    filter: Record<string, Record<string, any>>;
+    sort?: string[];
+    map?: string[];
+  }): QueryBuilder {
     return new MongoQueryBuilder(query.filter, query.sort, query.map);
   }
 
@@ -27,15 +27,15 @@ class MongoQueryBuilder extends QueryBuilder {
     this.map = map || [];
   }
 
-  build(): Record<string,any> {
+  build(): { filter: Record<string, any>; map: string[]; sort: string } {
     return {
       filter: this.buildFilter(),
       map: this.buildMap(),
-      sort: this.buildSort()
-    }
+      sort: this.buildSort(),
+    };
   }
 
-  private buildFilter(): Record<string,any>{
+  private buildFilter(): Record<string, any> {
     return (Object.keys(this.filter) as string[]).reduce(
       (acc: Record<string, any>, crr: string) => ({
         ...acc,
@@ -45,11 +45,11 @@ class MongoQueryBuilder extends QueryBuilder {
     );
   }
 
-  private buildSort(): string{
+  private buildSort(): string {
     return this.sort.join(' ');
   }
 
-  private buildMap(): string[]{
+  private buildMap(): string[] {
     return this.map;
   }
 }
