@@ -1,6 +1,6 @@
 {
   "name": "@eoet/nodejs-ts-common",
-  "version": "1.1.20",
+  "version": "1.1.21",
   "description": "Nodejs typescript common",
   "license": "MIT",
   "author": "Hiep Nguyen <hoanghiep2004hy@gmail.com>",
