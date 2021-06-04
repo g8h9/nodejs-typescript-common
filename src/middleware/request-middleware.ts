@@ -1,6 +1,4 @@
-import {
-  RequestHandler, Request, Response, NextFunction
-} from 'express';
+import { RequestHandler, Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { BadRequest } from '../errors/bad-request';
 import { logger } from '../logger';
@@ -20,6 +18,46 @@ interface HandlerOptions {
   };
 }
 
+export const validateInputMiddleware = (options?: HandlerOptions) => (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (options?.validation?.body) {
+    const { error } = options?.validation?.body.validate(req.body, { abortEarly: false });
+    if (error) {
+      next(
+        new BadRequest(
+          'Invalidate input',
+          error.details.map(({ path, type, context }) => ({ path, type, context })),
+        ),
+      );
+      return;
+    }
+  }
+  next();
+};
+
+export const safeRequestHandler = (handler: RequestHandler) => async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await handler(req, res, next);
+    next();
+  } catch (err) {
+    if (process.env.NODE_ENV === 'development') {
+      logger.log({
+        level: 'error',
+        message: 'Error in request handler',
+        error: err,
+      });
+    }
+    next(err);
+  }
+};
+
 /**
  * This router wrapper catches any error from async await
  * and throws it to the default express error handler,
@@ -33,10 +71,15 @@ export const requestMiddleware = (handler: RequestHandler, options?: HandlerOpti
 ) => {
   if (options?.validation?.body) {
     const { error } = options?.validation?.body.validate(req.body, {
-      abortEarly: false
+      abortEarly: false,
     });
     if (error != null) {
-      next(new BadRequest(getMessageFromJoiError(error)));
+      next(
+        new BadRequest(
+          '',
+          error.details.map(({ path, type, context }) => ({ path, type, context })),
+        ),
+      );
       return;
     }
   }
@@ -49,7 +92,7 @@ export const requestMiddleware = (handler: RequestHandler, options?: HandlerOpti
       logger.log({
         level: 'error',
         message: 'Error in request handler',
-        error: err
+        error: err,
       });
     }
     next(err);
